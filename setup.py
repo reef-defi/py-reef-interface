@@ -42,8 +42,7 @@ elif environ.get("GITHUB_REF"):
 
     version = environ["GITHUB_REF"].replace("refs/tags/v", "")
 else:
-    version = "0.1.0"
-    # raise ValueError('Missing commit tag, can\'t set version')
+    raise ValueError("Missing commit tag, can't set version")
 
 here = path.abspath(path.dirname(__file__))
 
