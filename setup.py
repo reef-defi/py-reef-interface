@@ -166,6 +166,7 @@ setup(
         "py-sr25519-bindings~=0.1.2",
         "py-ed25519-bindings~=0.1.2",
         "py-bip39-bindings~=0.1.6",
+        "packaging~=21.0"
     ],
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
