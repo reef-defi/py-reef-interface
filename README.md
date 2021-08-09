@@ -20,6 +20,8 @@ pip install reef-interface
 The following examples show how to initialize:
 
 ```python
+from reefinterface import ReefInterface
+
 reef = ReefInterface(url="testnet")
 ```
 
