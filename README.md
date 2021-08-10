@@ -5,10 +5,9 @@ Python Reef Interface Library
 ## Description
 This library specializes in interfacing with the Reef node, providing additional convenience methods to deal with
 SCALE encoding/decoding (the default output and input format of the Substrate JSONRPC), metadata parsing, type registry
-management and versioning of types.
+management and versioning of types. 
 
-## Documentation
-Python Reef Interface is the fork of [Python Substrate Interface](https://polkascan.github.io/py-substrate-interface/). Most of the documentation on the link should apply here as well.
+[Documentation](https://reef-defi.github.io/py-reef-interface/reefinterface/base.html#reefinterface.base.ReefInterface)
 
 ## Installation
 ```bash
