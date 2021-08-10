@@ -3729,7 +3729,14 @@ class QueryMapResult:
 
 
 class ReefInterface(SubstrateInterface):
-    def __init__(self, url="testnet", registry=None):
+    def __init__(self, url="testnet"):
+        """
+        A class used for interfacing with a Reef node.
+
+        Parameters
+        ----------
+        url: the URL to the Reef node, either "mainnet", "testnet" or in format "wss://127.0.0.1:9944"
+        """
         if url == "testnet":
             url = "wss://rpc-testnet.reefscan.com/ws"
         elif url == "mainnet":
