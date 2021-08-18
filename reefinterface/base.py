@@ -3395,6 +3395,7 @@ class SubstrateInterface:
             self.runtime_config.update_type_registry(self.type_registry)
 
 
+
 class ExtrinsicReceipt:
     def __init__(
         self,
@@ -3748,5 +3749,5 @@ class ReefInterface(SubstrateInterface):
             url=url,
             ss58_format=42,
             type_registry=types,
-            type_registry_preset="substrate-node-template",
+            type_registry_preset="substrate-node-template"
         )
