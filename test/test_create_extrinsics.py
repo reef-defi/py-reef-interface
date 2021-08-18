@@ -30,7 +30,7 @@ class CreateExtrinsicsTestCase(unittest.TestCase):
         )
 
         cls.reef = ReefInterface(
-            url=settings.POLKADOT_NODE_URL,
+            url=settings.REEF_NODE_URL,
         )
 
     def test_compatibility_polkadot_runtime(self):

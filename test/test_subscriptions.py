@@ -23,7 +23,7 @@ from test import settings
 class SubscriptionsTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.substrate = ReefInterface(url=settings.POLKADOT_NODE_URL)
+        cls.substrate = ReefInterface(url=settings.REEF_NODE_URL)
 
     def test_query_subscription(self):
         def subscription_handler(obj, update_nr, subscription_id):

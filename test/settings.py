@@ -18,7 +18,5 @@ from os import environ
 KUSAMA_NODE_URL = (
     environ.get("SUBSTRATE_NODE_URL_KUSAMA") or "wss://kusama-rpc.polkadot.io/"
 )
-POLKADOT_NODE_URL = environ.get("SUBSTRATE_NODE_URL_POLKADOT") or "mainnet"
-ROCOCO_NODE_URL = (
-    environ.get("SUBSTRATE_NODE_URL_ROCOCO") or "wss://rococo-rpc.polkadot.io"
-)
+
+REEF_NODE_URL = environ.get("REEF_NODE_URL") or "mainnet"

@@ -29,7 +29,7 @@ class QueryTestCase(unittest.TestCase):
         )
 
         cls.polkadot_substrate = ReefInterface(
-            url=settings.POLKADOT_NODE_URL,
+            url=settings.REEF_NODE_URL,
         )
 
     def test_system_account(self):
