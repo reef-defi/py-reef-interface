@@ -15,8 +15,10 @@
 # limitations under the License.
 from os import environ
 
-KUSAMA_NODE_URL = environ.get('SUBSTRATE_NODE_URL_KUSAMA') or 'wss://kusama-rpc.polkadot.io/'
-POLKADOT_NODE_URL = environ.get('SUBSTRATE_NODE_URL_POLKADOT') or 'wss://rpc.polkadot.io/'
-ROCOCO_NODE_URL = environ.get('SUBSTRATE_NODE_URL_ROCOCO') or 'wss://rococo-rpc.polkadot.io'
-
-
+KUSAMA_NODE_URL = (
+    environ.get("SUBSTRATE_NODE_URL_KUSAMA") or "wss://kusama-rpc.polkadot.io/"
+)
+POLKADOT_NODE_URL = environ.get("SUBSTRATE_NODE_URL_POLKADOT") or "mainnet"
+ROCOCO_NODE_URL = (
+    environ.get("SUBSTRATE_NODE_URL_ROCOCO") or "wss://rococo-rpc.polkadot.io"
+)

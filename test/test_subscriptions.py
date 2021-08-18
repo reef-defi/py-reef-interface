@@ -16,38 +16,37 @@
 
 import unittest
 
-from reefinterface import SubstrateInterface
+from reefinterface import SubstrateInterface, ReefInterface
 from test import settings
 
 
 class SubscriptionsTestCase(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
-        cls.substrate = SubstrateInterface(
-            url=settings.POLKADOT_NODE_URL
-        )
+        cls.substrate = ReefInterface(url=settings.POLKADOT_NODE_URL)
 
     def test_query_subscription(self):
-
         def subscription_handler(obj, update_nr, subscription_id):
 
-            return {'update_nr': update_nr, 'subscription_id': subscription_id}
+            return {"update_nr": update_nr, "subscription_id": subscription_id}
 
-        result = self.substrate.query("System", "Events", [], subscription_handler=subscription_handler)
+        result = self.substrate.query(
+            "System", "Events", [], subscription_handler=subscription_handler
+        )
 
-        self.assertEqual(result['update_nr'], 0)
-        self.assertIsNotNone(result['subscription_id'])
+        self.assertEqual(result["update_nr"], 0)
+        self.assertIsNotNone(result["subscription_id"])
 
     def test_subscribe_new_heads(self):
-
         def block_subscription_handler(obj, update_nr, subscription_id):
-            return obj['header']['number']
+            return obj["header"]["number"]
 
-        result = self.substrate.subscribe_block_headers(block_subscription_handler, finalized_only=True)
+        result = self.substrate.subscribe_block_headers(
+            block_subscription_handler, finalized_only=True
+        )
 
         self.assertGreater(result, 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
