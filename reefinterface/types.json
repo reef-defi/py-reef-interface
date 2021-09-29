@@ -1,3 +1,10 @@
 {
-  "types": {}
+  "versioning": [
+    {
+      "runtime_range": [0, 5],
+      "types": {
+        "AccountInfo": "AccountInfoWithDualRefCount"
+      }
+    }
+  ]
 }
