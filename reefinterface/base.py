@@ -3632,6 +3632,13 @@ class ExtrinsicReceipt:
         """
         if self.__total_fee_amount is None:
             self.process_events()
+        elif self.__total_fee_amount == 0:
+            fee_details = self.substrate.rpc_request("payment_queryFeeDetails", [str(self.extrinsic.data)])
+            if "result" in fee_details and "inclusionFee" in fee_details["result"]:
+                for fee in fee_details["result"]["inclusionFee"].values():
+                    self.__total_fee_amount += int(fee, 16)
+            else:
+                raise SubstrateRequestException(fee_details["error"]["message"])
         return self.__total_fee_amount
 
     # Helper functions
