@@ -1,7 +1,7 @@
 {
   "versioning": [
     {
-      "runtime_range": [0, 5],
+      "runtime_range": [0, 6],
       "types": {
         "AccountInfo": "AccountInfoWithDualRefCount"
       }
