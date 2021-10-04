@@ -1,10 +1,17 @@
 {
-  "versioning": [
-    {
-      "runtime_range": [0, 6],
-      "types": {
-        "AccountInfo": "AccountInfoWithDualRefCount"
-      }
-    }
-  ]
+	"runtime_id": 7,
+	"types": {
+		"EvmAddress": "H160"
+	},
+	"versioning": [
+		{
+			"runtime_range": [
+				0,
+				6
+			],
+			"types": {
+				"AccountInfo": "AccountInfoWithDualRefCount"
+			}
+		}
+	]
 }
