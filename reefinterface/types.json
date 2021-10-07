@@ -17,6 +17,41 @@
 					"Bytes"
 				]
 			]
+		},
+		"EvmAccountInfoOption": "Option<EvmAccountInfo>",
+		"EvmAccountInfo": {
+			"type": "struct",
+			"type_mapping": [
+				[
+					"nonce",
+					"Index"
+				],
+				[
+					"contract_info",
+					"Option<EvmContractInfo>"
+				],
+				[
+					"developer_deposit",
+					"Option<BalanceOf>"
+				]
+			]
+		},
+		"EvmContractInfo": {
+			"type": "struct",
+			"type_mapping": [
+				[
+					"code_hash",
+					"H256"
+				],
+				[
+					"maintainer",
+					"EvmAddress"
+				],
+				[
+					"deployed",
+					"Bool"
+				]
+			]
 		}
 	},
 	"versioning": [
