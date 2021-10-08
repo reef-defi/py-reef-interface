@@ -1,68 +1,47 @@
 {
-	"types": {
-		"EvmAddress": "H160",
-		"Log": {
-			"type": "struct",
-			"type_mapping": [
-				[
-					"address",
-					"H160"
-				],
-				[
-					"topics",
-					"Vec<H256>"
-				],
-				[
-					"data",
-					"Bytes"
-				]
-			]
-		},
-		"EvmAccountInfoOption": "Option<EvmAccountInfo>",
-		"EvmAccountInfo": {
-			"type": "struct",
-			"type_mapping": [
-				[
-					"nonce",
-					"Index"
-				],
-				[
-					"contract_info",
-					"Option<EvmContractInfo>"
-				],
-				[
-					"developer_deposit",
-					"Option<BalanceOf>"
-				]
-			]
-		},
-		"EvmContractInfo": {
-			"type": "struct",
-			"type_mapping": [
-				[
-					"code_hash",
-					"H256"
-				],
-				[
-					"maintainer",
-					"EvmAddress"
-				],
-				[
-					"deployed",
-					"Bool"
-				]
-			]
-		}
-	},
-	"versioning": [
-		{
-			"runtime_range": [
-				0,
-				6
-			],
-			"types": {
-				"AccountInfo": "AccountInfoWithDualRefCount"
-			}
-		}
-	]
+  "types": {
+    "Keys": {
+      "type": "struct",
+      "type_mapping": [
+        ["babe", "AccountId"],
+        ["grandpa", "AccountId"],
+        ["im_online", "AccountId"],
+        ["authority_discovery", "AccountId"]
+      ]
+    },
+    "EvmAddress": "H160",
+    "Log": {
+      "type": "struct",
+      "type_mapping": [
+        ["address", "H160"],
+        ["topics", "Vec<H256>"],
+        ["data", "Bytes"]
+      ]
+    },
+    "EvmAccountInfoOption": "Option<EvmAccountInfo>",
+    "EvmAccountInfo": {
+      "type": "struct",
+      "type_mapping": [
+        ["nonce", "Index"],
+        ["contract_info", "Option<EvmContractInfo>"],
+        ["developer_deposit", "Option<BalanceOf>"]
+      ]
+    },
+    "EvmContractInfo": {
+      "type": "struct",
+      "type_mapping": [
+        ["code_hash", "H256"],
+        ["maintainer", "EvmAddress"],
+        ["deployed", "Bool"]
+      ]
+    }
+  },
+  "versioning": [
+    {
+      "runtime_range": [0, 6],
+      "types": {
+        "AccountInfo": "AccountInfoWithDualRefCount"
+      }
+    }
+  ]
 }
