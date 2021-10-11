@@ -38,7 +38,7 @@
   },
   "versioning": [
     {
-      "runtime_range": [0, 6],
+      "runtime_range": [0, 7],
       "types": {
         "AccountInfo": "AccountInfoWithDualRefCount"
       }
