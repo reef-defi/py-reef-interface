@@ -1652,10 +1652,10 @@ class SubstrateInterface:
             param_types = [map_type["key1"], map_type["key2"]]
             return_scale_type = map_type.get("value")
 
-            #if len(params) != 2:
-            #    raise ValueError(
-            #        'Storage call of type "DoubleMapType" requires 2 parameters'
-            #    )
+            if len(params) != 2:
+               raise ValueError(
+                   'Storage call of type "DoubleMapType" requires 2 parameters'
+               )
 
         elif "NMapType" in storage_item.type:
 
