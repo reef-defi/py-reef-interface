@@ -25,6 +25,10 @@ class TestInit(unittest.TestCase):
     def setUpClass(cls):
         cls.reef = ReefInterface(url="mainnet")
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.reef.close()
+
     def test_chain(self):
         self.assertEqual("Reef Mainnet", self.reef.chain)
 

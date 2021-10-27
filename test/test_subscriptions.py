@@ -23,14 +23,18 @@ from test import settings
 class SubscriptionsTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.substrate = ReefInterface(url=settings.REEF_NODE_URL)
+        cls.reef = ReefInterface(url=settings.REEF_NODE_URL)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.reef.close()
 
     def test_query_subscription(self):
         def subscription_handler(obj, update_nr, subscription_id):
 
             return {"update_nr": update_nr, "subscription_id": subscription_id}
 
-        result = self.substrate.query(
+        result = self.reef.query(
             "System", "Events", [], subscription_handler=subscription_handler
         )
 
@@ -41,7 +45,7 @@ class SubscriptionsTestCase(unittest.TestCase):
         def block_subscription_handler(obj, update_nr, subscription_id):
             return obj["header"]["number"]
 
-        result = self.substrate.subscribe_block_headers(
+        result = self.reef.subscribe_block_headers(
             block_subscription_handler, finalized_only=True
         )
 

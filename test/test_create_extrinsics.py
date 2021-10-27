@@ -33,20 +33,14 @@ class CreateExtrinsicsTestCase(unittest.TestCase):
             url=settings.REEF_NODE_URL,
         )
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.reef.close()
+
     def test_compatibility_polkadot_runtime(self):
         type_reg = load_type_registry_preset("polkadot")
 
         runtime_data = self.reef.rpc_request("state_getRuntimeVersion", [])
-        self.assertLessEqual(
-            runtime_data["result"]["specVersion"],
-            type_reg.get("runtime_id"),
-            "Current runtime is incompatible",
-        )
-
-    def test_compatibility_kusama_runtime(self):
-        type_reg = load_type_registry_preset("kusama")
-
-        runtime_data = self.kusama_substrate.rpc_request("state_getRuntimeVersion", [])
         self.assertLessEqual(
             runtime_data["result"]["specVersion"],
             type_reg.get("runtime_id"),
@@ -58,7 +52,7 @@ class CreateExtrinsicsTestCase(unittest.TestCase):
         mnemonic = Keypair.generate_mnemonic()
         keypair = Keypair.create_from_mnemonic(mnemonic, ss58_format=2)
 
-        for substrate in [self.kusama_substrate, self.reef]:
+        for substrate in [self.reef]:
 
             # Create balance transfer call
             call = substrate.compose_call(
@@ -96,7 +90,7 @@ class CreateExtrinsicsTestCase(unittest.TestCase):
         mnemonic = Keypair.generate_mnemonic()
         keypair = Keypair.create_from_mnemonic(mnemonic, ss58_format=2)
 
-        for substrate in [self.kusama_substrate, self.reef]:
+        for substrate in [self.reef]:
 
             # Create balance transfer call
             call = substrate.compose_call(
@@ -123,7 +117,7 @@ class CreateExtrinsicsTestCase(unittest.TestCase):
 
     def test_create_unsigned_extrinsic(self):
 
-        call = self.kusama_substrate.compose_call(
+        call = self.reef.compose_call(
             call_module="Timestamp",
             call_function="set",
             call_params={
@@ -134,61 +128,35 @@ class CreateExtrinsicsTestCase(unittest.TestCase):
         extrinsic = self.kusama_substrate.create_unsigned_extrinsic(call)
         self.assertEqual(str(extrinsic.data), "0x280402000ba09cc0317501")
 
-    def test_payment_info(self):
-        keypair = Keypair(
-            ss58_address="EaG2CRhJWPb7qmdcJvy3LiWdh26Jreu9Dx6R1rXxPmYXoDk"
-        )
+    # TODO: should be rewritten for REEF mainnet
+    # def test_payment_info(self):
+    # keypair = Keypair(
+    # ss58_address="EaG2CRhJWPb7qmdcJvy3LiWdh26Jreu9Dx6R1rXxPmYXoDk"
+    # )
 
-        call = self.kusama_substrate.compose_call(
-            call_module="Balances",
-            call_function="transfer",
-            call_params={
-                "dest": "EaG2CRhJWPb7qmdcJvy3LiWdh26Jreu9Dx6R1rXxPmYXoDk",
-                "value": 2 * 10 ** 3,
-            },
-        )
-        payment_info = self.kusama_substrate.get_payment_info(
-            call=call, keypair=keypair
-        )
+    # call = self.reef.compose_call(
+    # call_module="Balances",
+    # call_function="transfer",
+    # call_params={
+    # "dest": "EaG2CRhJWPb7qmdcJvy3LiWdh26Jreu9Dx6R1rXxPmYXoDk",
+    # "value": 2 * 10 ** 3,
+    # },
+    # )
+    # payment_info = self.reef.get_payment_info(call=call, keypair=keypair)
 
-        self.assertIn("class", payment_info)
-        self.assertIn("partialFee", payment_info)
-        self.assertIn("weight", payment_info)
+    # self.assertIn("class", payment_info)
+    # self.assertIn("partialFee", payment_info)
+    # self.assertIn("weight", payment_info)
 
-        self.assertGreater(payment_info["partialFee"], 0)
+    # self.assertGreater(payment_info["partialFee"], 0)
 
-    def test_generate_signature_payload_lte_256_bytes(self):
+    # result = ExtrinsicReceipt(
+    # substrate=self.reef,
+    # extrinsic_hash="0x5bcb59fdfc2ba852dabf31447b84764df85c8f64073757ea800f25b48e63ebd2",
+    # block_hash="0x8dae706d0f4882a7db484e708e27d9363a3adfa53baaac8b58c30f7c519a2520",
+    # )
 
-        call = self.kusama_substrate.compose_call(
-            call_module="System",
-            call_function="remark",
-            call_params={"_remark": "0x" + ("01" * 177)},
-        )
-
-        signature_payload = self.kusama_substrate.generate_signature_payload(call=call)
-
-        self.assertEqual(signature_payload.length, 256)
-
-    def test_generate_signature_payload_gt_256_bytes(self):
-
-        call = self.kusama_substrate.compose_call(
-            call_module="System",
-            call_function="remark",
-            call_params={"_remark": "0x" + ("01" * 178)},
-        )
-
-        signature_payload = self.kusama_substrate.generate_signature_payload(call=call)
-
-        self.assertEqual(signature_payload.length, 32)
-
-    def test_check_extrinsic_receipt(self):
-        result = ExtrinsicReceipt(
-            substrate=self.kusama_substrate,
-            extrinsic_hash="0x5bcb59fdfc2ba852dabf31447b84764df85c8f64073757ea800f25b48e63ebd2",
-            block_hash="0x8dae706d0f4882a7db484e708e27d9363a3adfa53baaac8b58c30f7c519a2520",
-        )
-
-        self.assertTrue(result.is_success)
+    # self.assertTrue(result.is_success)
 
     def test_check_extrinsic_failed_result(self):
         result = ExtrinsicReceipt(

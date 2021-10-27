@@ -1561,6 +1561,7 @@ class SubstrateInterface:
         params: list = None,
         block_hash: str = None,
         subscription_handler: callable = None,
+        override_result_type: str = None
     ) -> Optional[ScaleType]:
         """
         Retrieves the storage entry for given module, function and optional parameters at given block hash.
@@ -1652,9 +1653,9 @@ class SubstrateInterface:
             return_scale_type = map_type.get("value")
 
             if len(params) != 2:
-                raise ValueError(
-                    'Storage call of type "DoubleMapType" requires 2 parameters'
-                )
+               raise ValueError(
+                   'Storage call of type "DoubleMapType" requires 2 parameters'
+               )
 
         elif "NMapType" in storage_item.type:
 
@@ -1682,7 +1683,7 @@ class SubstrateInterface:
         )
 
         def result_handler(message, update_nr, subscription_id):
-            if return_scale_type:
+            if return_scale_type or override_result_type:
 
                 for change_storage_key, change_data in message["params"]["result"][
                     "changes"
@@ -1690,7 +1691,7 @@ class SubstrateInterface:
                     if change_storage_key == storage_hash:
 
                         updated_obj = ScaleDecoder.get_decoder_class(
-                            type_string=return_scale_type,
+                            type_string=override_result_type if override_result_type else return_scale_type,
                             data=ScaleBytes(change_data),
                             metadata=self.metadata_decoder,
                             runtime_config=self.runtime_config,
@@ -1728,7 +1729,7 @@ class SubstrateInterface:
                 raise SubstrateRequestException(response["error"]["message"])
 
             if "result" in response:
-                if return_scale_type:
+                if return_scale_type or override_result_type:
 
                     if response.get("result") is not None:
                         query_value = response.get("result")
@@ -1741,7 +1742,7 @@ class SubstrateInterface:
                         query_value = storage_item.fallback
 
                     obj = ScaleDecoder.get_decoder_class(
-                        type_string=return_scale_type,
+                        type_string=override_result_type if override_result_type else return_scale_type,
                         data=ScaleBytes(query_value),
                         metadata=self.metadata_decoder,
                         runtime_config=self.runtime_config,
@@ -3632,6 +3633,14 @@ class ExtrinsicReceipt:
         """
         if self.__total_fee_amount is None:
             self.process_events()
+
+        if self.__total_fee_amount == 0:
+            fee_details = self.substrate.rpc_request("payment_queryFeeDetails", [str(self.extrinsic.data)])
+            if "result" in fee_details and "inclusionFee" in fee_details["result"]:
+                for fee in fee_details["result"]["inclusionFee"].values():
+                    self.__total_fee_amount += int(fee, 16)
+            else:
+                raise SubstrateRequestException(fee_details["error"]["message"])
         return self.__total_fee_amount
 
     # Helper functions
