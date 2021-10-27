@@ -22,87 +22,74 @@ from reefinterface import SubstrateInterface, ReefInterface
 from test import settings
 
 
-class KusamaTypeRegistryTestCase(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.substrate = SubstrateInterface(
-            url=settings.KUSAMA_NODE_URL, ss58_format=2, type_registry_preset="kusama"
-        )
-
-    def test_type_registry_compatibility(self):
-
-        for scale_type in self.substrate.get_type_registry():
-            obj = self.substrate.runtime_config.get_decoder_class(scale_type)
-
-            self.assertIsNotNone(obj, "{} not supported".format(scale_type))
-
-
 class ReefTypeRegistryTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.substrate = ReefInterface(
+        cls.reef = ReefInterface(
             url=settings.REEF_NODE_URL,
         )
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.reef.close()
+
     # def test_type_registry_compatibility(self):
 
-    # for scale_type in self.substrate.get_type_registry():
+    # for scale_type in self.reef.get_type_registry():
 
-    # obj = self.substrate.runtime_config.get_decoder_class(scale_type)
+    # obj = self.reef.runtime_config.get_decoder_class(scale_type)
 
     # self.assertIsNotNone(obj, "{} not supported".format(scale_type))
 
 
 class ReloadTypeRegistryTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.substrate = SubstrateInterface(
+        self.reef = SubstrateInterface(
             url="dummy", ss58_format=42, type_registry_preset="test"
         )
 
     def test_initial_correct_type_local(self):
-        decoding_class = self.substrate.runtime_config.type_registry["types"][
-            "blocknumber"
-        ]
+        decoding_class = self.reef.runtime_config.type_registry["types"]["blocknumber"]
         self.assertEqual(
-            self.substrate.runtime_config.get_decoder_class("u64"), decoding_class
+            self.reef.runtime_config.get_decoder_class("u64"), decoding_class
         )
 
     def test_reloading_use_remote_preset(self):
 
         # Intentionally overwrite type in local preset
-        u32_cls = self.substrate.runtime_config.get_decoder_class("u32")
-        u64_cls = self.substrate.runtime_config.get_decoder_class("u64")
+        u32_cls = self.reef.runtime_config.get_decoder_class("u32")
+        u64_cls = self.reef.runtime_config.get_decoder_class("u64")
 
-        self.substrate.runtime_config.type_registry["types"]["blocknumber"] = u32_cls
+        self.reef.runtime_config.type_registry["types"]["blocknumber"] = u32_cls
 
         self.assertEqual(
-            u32_cls, self.substrate.runtime_config.get_decoder_class("BlockNumber")
+            u32_cls, self.reef.runtime_config.get_decoder_class("BlockNumber")
         )
 
         # Reload type registry
-        self.substrate.reload_type_registry()
+        self.reef.reload_type_registry()
 
         self.assertEqual(
-            u64_cls, self.substrate.runtime_config.get_decoder_class("BlockNumber")
+            u64_cls, self.reef.runtime_config.get_decoder_class("BlockNumber")
         )
 
     def test_reloading_use_local_preset(self):
 
         # Intentionally overwrite type in local preset
-        u32_cls = self.substrate.runtime_config.get_decoder_class("u32")
-        u64_cls = self.substrate.runtime_config.get_decoder_class("u64")
+        u32_cls = self.reef.runtime_config.get_decoder_class("u32")
+        u64_cls = self.reef.runtime_config.get_decoder_class("u64")
 
-        self.substrate.runtime_config.type_registry["types"]["blocknumber"] = u32_cls
+        self.reef.runtime_config.type_registry["types"]["blocknumber"] = u32_cls
 
         self.assertEqual(
-            u32_cls, self.substrate.runtime_config.get_decoder_class("BlockNumber")
+            u32_cls, self.reef.runtime_config.get_decoder_class("BlockNumber")
         )
 
         # Reload type registry
-        self.substrate.reload_type_registry(use_remote_preset=False)
+        self.reef.reload_type_registry(use_remote_preset=False)
 
         self.assertEqual(
-            u64_cls, self.substrate.runtime_config.get_decoder_class("BlockNumber")
+            u64_cls, self.reef.runtime_config.get_decoder_class("BlockNumber")
         )
 
 

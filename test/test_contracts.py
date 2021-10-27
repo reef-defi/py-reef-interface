@@ -112,15 +112,6 @@ class ContractMetadataTestCase(unittest.TestCase):
 
         self.assertEqual('Argument "initial_supply" is missing', str(cm.exception))
 
-    def test_constructor_data(self):
-
-        scale_data = self.contract_metadata.generate_constructor_data(
-            "new", args={"initial_supply": 1000}
-        )
-        self.assertEqual(
-            "0xd183512be8030000000000000000000000000000", scale_data.to_hex()
-        )
-
     def test_invalid_message_name(self):
         with self.assertRaises(ValueError) as cm:
             self.contract_metadata.generate_message_data("invalid_msg_name")
@@ -131,20 +122,6 @@ class ContractMetadataTestCase(unittest.TestCase):
 
         scale_data = self.contract_metadata.generate_message_data("total_supply")
         self.assertEqual("0xdcb736b5", scale_data.to_hex())
-
-    def test_generate_message_data_with_args(self):
-
-        scale_data = self.contract_metadata.generate_message_data(
-            "transfer",
-            args={
-                "to": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-                "value": 10000,
-            },
-        )
-        self.assertEqual(
-            "0xfae3a09d8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a4810270000000000000000000000000000",
-            scale_data.to_hex(),
-        )
 
     def test_generate_message_data_missing_arg(self):
         with self.assertRaises(ValueError) as cm:
@@ -223,23 +200,6 @@ class ContractInstanceTestCase(unittest.TestCase):
             ),
             substrate=self.substrate,
         )
-
-    def test_instance_read(self):
-
-        result = self.contract.read(self.keypair, "total_supply")
-
-        self.assertEqual(1000000000000000000, result.contract_result_data.value)
-
-    def test_instance_read_with_args(self):
-
-        result = self.contract.read(
-            self.keypair,
-            "balance_of",
-            args={"owner": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"},
-        )
-
-        self.assertEqual(1000000000000000000, result.contract_result_data.value)
-        self.assertEqual("u128", result.contract_result_scale_type)
 
 
 if __name__ == "__main__":
