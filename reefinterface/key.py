@@ -14,10 +14,11 @@
 # limitations under the License.
 import re
 from hashlib import blake2b
+from math import ceil
 
 from scalecodec import ScaleDecoder
 
-RE_JUNCTION = r'(\/\/?)([^/]+)'
+RE_JUNCTION = r"(\/\/?)([^/]+)"
 JUNCTION_ID_LEN = 32
 
 
@@ -29,33 +30,40 @@ class DeriveJunction:
     @classmethod
     def from_derive_path(cls, path: str, is_hard=False):
 
-        path_scale = ScaleDecoder.get_decoder_class('Bytes')
-        path_scale.encode(path)
-
-        if len(path) > JUNCTION_ID_LEN:
-            chain_code = blake2b(path_scale.data.data, digest_size=32).digest()
+        if path.isnumeric():
+            byte_length = ceil(int(path).bit_length() / 8)
+            chain_code = int(path).to_bytes(byte_length, "little").ljust(32, b"\x00")
         else:
-            chain_code = bytes(path_scale.data.data.ljust(32, b'\x00'))
+            path_scale = ScaleDecoder.get_decoder_class("Bytes")
+            path_scale.encode(path)
+
+            if len(path) > JUNCTION_ID_LEN:
+                chain_code = blake2b(path_scale.data.data, digest_size=32).digest()
+            else:
+                chain_code = bytes(path_scale.data.data.ljust(32, b"\x00"))
 
         return cls(chain_code=chain_code, is_hard=is_hard)
 
 
 def extract_derive_path(derive_path: str):
 
-    path_check = ''
+    path_check = ""
     junctions = []
     paths = re.findall(RE_JUNCTION, derive_path)
 
     if paths:
-        path_check = ''.join(''.join(path) for path in paths)
+        path_check = "".join("".join(path) for path in paths)
 
         for path_separator, path_value in paths:
-            junctions.append(DeriveJunction.from_derive_path(
-                path=path_value, is_hard=path_separator == '//')
+            junctions.append(
+                DeriveJunction.from_derive_path(
+                    path=path_value, is_hard=path_separator == "//"
+                )
             )
 
     if path_check != derive_path:
-        raise ValueError('Reconstructed path "{}" does not match input'.format(path_check))
+        raise ValueError(
+            'Reconstructed path "{}" does not match input'.format(path_check)
+        )
 
     return junctions
-
