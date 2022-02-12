@@ -54,7 +54,7 @@ for extrinsic in result['extrinsics']:
     for param in extrinsic.params:
 
         if param['type'] == 'Compact<Balance>':
-            param['value'] = '{} {}'.format(param['value'] / 10 **eef
+            param['value'] = '{} {}'.format(param['value'] / 10 ** 18
             r.token_decimals, reef.token_symbol)
 
         print("Param '{}': {}".format(param['name'], param['value']))
@@ -175,7 +175,7 @@ call = reef.compose_call(
     call_function='transfer',
     call_params={
         'dest': '5E9oDs9PjpsBbxXxRE9uMaZZhnBAV38n2ouLB28oecBDdeQo',
-        'value': 1 * 10**12
+        'value': 1 * 10**18
     }
 )
 
@@ -283,7 +283,7 @@ call = reef.compose_call(
     call_function='transfer',
     call_params={
         'dest': 'EaG2CRhJWPb7qmdcJvy3LiWdh26Jreu9Dx6R1rXxPmYXoDk',
-        'value': 2 * 10 ** 3
+        'value': 1 * 10**18
     }
 )
 payment_info = reef.get_payment_info(call=call, keypair=keypair)
@@ -304,7 +304,7 @@ call = reef.compose_call(
     call_function='transfer',
     call_params={
         'dest': '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-        'value': 2 * 10**8
+        'value': 1 * 10**18
     }
 )
 
