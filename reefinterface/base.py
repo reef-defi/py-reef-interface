@@ -56,13 +56,15 @@ from .utils.hasher import (
 )
 from .utils.ss58 import is_valid_ss58_address, ss58_decode, ss58_encode
 
+from .evm import Evm
+
 __all__ = [
     "Keypair",
     "KeypairType",
     "SubstrateInterface",
     "ReefInterface",
     "ExtrinsicReceipt",
-"logger",
+    "logger",
 ]
 
 logger = logging.getLogger(__name__)
@@ -3738,6 +3740,7 @@ class QueryMapResult:
         return self.records[item]
 
 
+        
 class ReefInterface(SubstrateInterface):
     def __init__(self, url="testnet"):
         """
@@ -3760,3 +3763,5 @@ class ReefInterface(SubstrateInterface):
             type_registry=types,
             type_registry_preset="substrate-node-template"
         )
+
+        self.evm = Evm(self)
