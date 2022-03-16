@@ -33,14 +33,6 @@ class ReefTypeRegistryTestCase(unittest.TestCase):
     def tearDownClass(cls):
         cls.reef.close()
 
-    # def test_type_registry_compatibility(self):
-
-    # for scale_type in self.reef.get_type_registry():
-
-    # obj = self.reef.runtime_config.get_decoder_class(scale_type)
-
-    # self.assertIsNotNone(obj, "{} not supported".format(scale_type))
-
 
 class ReloadTypeRegistryTestCase(unittest.TestCase):
     def setUp(self) -> None:
@@ -52,25 +44,6 @@ class ReloadTypeRegistryTestCase(unittest.TestCase):
         decoding_class = self.reef.runtime_config.type_registry["types"]["blocknumber"]
         self.assertEqual(
             self.reef.runtime_config.get_decoder_class("u64"), decoding_class
-        )
-
-    def test_reloading_use_remote_preset(self):
-
-        # Intentionally overwrite type in local preset
-        u32_cls = self.reef.runtime_config.get_decoder_class("u32")
-        u64_cls = self.reef.runtime_config.get_decoder_class("u64")
-
-        self.reef.runtime_config.type_registry["types"]["blocknumber"] = u32_cls
-
-        self.assertEqual(
-            u32_cls, self.reef.runtime_config.get_decoder_class("BlockNumber")
-        )
-
-        # Reload type registry
-        self.reef.reload_type_registry()
-
-        self.assertEqual(
-            u64_cls, self.reef.runtime_config.get_decoder_class("BlockNumber")
         )
 
     def test_reloading_use_local_preset(self):
