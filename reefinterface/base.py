@@ -2054,6 +2054,8 @@ class SubstrateInterface:
             }
         )
 
+        extrinsic.extrinsic_hash = blake2b(call.data.data, digest_size=32).digest()
+
         return extrinsic
 
     def submit_extrinsic(
