@@ -246,7 +246,7 @@ The `period` specifies the number of blocks the extrinsic is valid counted from 
 
 ### Multi-signing
 
-In the below example we see signing with Alice and Bob, who have a common Multisig account. The transfer will not be done until both of them sign the extrinsic.
+In the below example we see signing with Alice and Bob, who have a common Multisig account. The transfer will not be done until both of them sign the extrinsic. Other extrinsics are available [here](https://polkadot.js.org/docs/substrate/extrinsics/#multisig).
 
 
 ```python
@@ -431,10 +431,53 @@ All runtime constants are provided in the metadata (see `reef.get_metadata_const
 to access these as a decoded `ScaleType` you can use the function `reef.get_constant()`:
 
 ```python
-
 constant = reef.get_constant("Balances", "ExistentialDeposit")
 
 print(constant.value) # 10000000000
+```
+
+### Batching calls
+By using `Utility` pallet, we can submit multiple calls within a single call. In the below example we create 100 transfer calls of 10k REEF.
+
+```python
+from reefinterface import Keypair, ReefInterface
+
+# Connect to node
+try:
+    network = "ws://127.0.0.1:9944"
+    substrate = ReefInterface(url=network)
+except ConnectionRefusedError:
+    print("Reef node could not be reached.")
+    exit()
+
+alice = Keypair.create_from_uri("//Alice")
+bob = Keypair.create_from_uri("//Bob")
+
+# Transfer 1M REEF in 100 calls of 10k
+call = substrate.compose_call(
+    call_module="Utility",
+    call_function="batch",
+    call_params={
+        "calls": [
+            {
+                "call_module": "Balances",
+                "call_function": "transfer",
+                "call_args": {"dest": bob.ss58_address, "value": 10000 * 10 ** 18},
+            }
+        ]
+        * 100
+    },
+)
+
+extrinsic = substrate.create_signed_extrinsic(
+    call=call, keypair=alice, era={"period": 64}
+)
+
+receipt = substrate.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+
+# Check the events
+for event in receipt.triggered_events:
+    print(f"* {event.value}")
 ```
 
 ## Cleanup and context manager
