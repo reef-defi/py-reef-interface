@@ -1,5 +1,25 @@
 {
   "types": {
+    "CurrencyId": {
+      "type": "enum",
+      "type_mapping": [
+        ["Token", "TokenSymbol"],
+        ["DEXShare", "(DexShare, DexShare)"],
+        ["ERC20", "EvmAddress"]
+      ]
+    },
+    "CurrencyIdOf": "CurrencyId",
+    "TokenSymbol": {
+      "type": "enum",
+      "value_list": ["REEF", "RUSD"]
+    },
+    "DexShare": {
+      "type": "enum",
+      "type_mapping": [
+        ["Token", "TokenSymbol"],
+        ["Erc20", "EvmAddress"]
+      ]
+    },
     "Keys": {
       "type": "struct",
       "type_mapping": [
