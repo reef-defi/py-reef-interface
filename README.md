@@ -244,6 +244,91 @@ extrinsic = reef.create_signed_extrinsic(call=call, keypair=keypair, era={'perio
 The `period` specifies the number of blocks the extrinsic is valid counted from current head.
 
 
+### Multi-signing
+
+In the below example we see signing with Alice and Bob, who have a common Multisig account. The transfer will not be done until both of them sign the extrinsic.
+
+
+```python
+# Multisig example
+from reefinterface import Keypair, ReefInterface
+
+# Connect to node
+try:
+    network = "ws://127.0.0.1:9944"
+    substrate = ReefInterface(url=network)
+except ConnectionRefusedError:
+    print("Reef node could not be reached.")
+    exit()
+
+alice = Keypair.create_from_uri("//Alice")
+bob = Keypair.create_from_uri("//Bob")
+
+# Extrinsic to be multi-signed
+transfer = substrate.compose_call(
+    call_module="Balances",
+    call_function="transfer",
+    call_params={"dest": alice.ss58_address, "value": 123 * 10 ** 18},
+)
+extrinsic = substrate.create_unsigned_extrinsic(transfer)
+
+# First sign will be done with alice
+call = substrate.compose_call(
+    call_module="Multisig",
+    call_function="approve_as_multi",
+    call_params={
+        "threshold": 2,  # number of signatures requires
+        "other_signatories": [bob.ss58_address],  # cannot be empty
+        "maybe_timepoint": None,  # must be None for the first approval
+        "call_hash": "0x" + extrinsic.extrinsic_hash.hex(),
+        "max_weight": 215137000,
+    },
+)
+
+call_extrinsic = substrate.create_signed_extrinsic(call, alice)
+receipt = substrate.submit_extrinsic(call_extrinsic, wait_for_inclusion=True)
+
+# Check the events
+for event in receipt.triggered_events:
+    print(f"* {event.value}")
+
+# ----------- SIGNING WITH BOB -----------
+# First get the timepoint (block_number, extrinsic_index) for the first approval above
+timepoint = {
+    "height": substrate.get_block_number(receipt.block_hash),
+    "index": receipt.extrinsic_idx,
+}
+
+# Compose call, extrinsic should match the one above
+call = substrate.compose_call(
+    call_module="Multisig",
+    call_function="as_multi",
+    call_params={
+        "threshold": 2,
+        "other_signatories": [alice.ss58_address],
+        "maybe_timepoint": timepoint,
+        "call": {
+            "call_module": "Balances",
+            "call_function": "transfer",
+            "call_args": {
+                "dest": alice.ss58_address,
+                "value": 123 * 10 ** 18,
+            },
+        },
+        "store_call": False,
+        "max_weight": 215137000,
+    },
+)
+
+call_extrinsic = substrate.create_signed_extrinsic(call, bob)
+receipt = substrate.submit_extrinsic(call_extrinsic, wait_for_inclusion=True)
+
+# Check the events
+for event in receipt.triggered_events:
+    print(f"* {event.value}")
+```
+
+
 ### Keypair creation and signing
 
 ```python
